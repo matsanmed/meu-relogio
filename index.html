@@ -43,12 +43,12 @@
             <!-- Inputs para definir o tempo -->
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label for="timerMinutes" class="block text-sm font-medium text-gray-600">Minutos</label>
-                    <input type="number" id="timerMinutes" min="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-lg text-center text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label for="timerHours" class="block text-sm font-medium text-gray-600">Horas</label>
+                    <input type="number" id="timerHours" min="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-lg text-center text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label for="timerSeconds" class="block text-sm font-medium text-gray-600">Segundos</label>
-                    <input type="number" id="timerSeconds" min="0" max="59" placeholder="SS" class="w-full p-2 border border-gray-300 rounded-lg text-center text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label for="timerMinutes" class="block text-sm font-medium text-gray-600">Minutos</label>
+                    <input type="number" id="timerMinutes" min="0" max="59" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-lg text-center text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
             </div>
             
@@ -76,8 +76,8 @@
         // --- Referências aos Elementos do DOM ---
         const stopwatchDisplay = document.getElementById('stopwatchDisplay');
         const timerDisplay = document.getElementById('timerDisplay');
+        const timerHoursInput = document.getElementById('timerHours');
         const timerMinutesInput = document.getElementById('timerMinutes');
-        const timerSecondsInput = document.getElementById('timerSeconds');
         const startPauseButton = document.getElementById('startPauseButton');
         const resetStopwatchButton = document.getElementById('resetStopwatchButton');
         const resetTimerButton = document.getElementById('resetTimerButton');
@@ -135,8 +135,8 @@
             stopwatchDisplay.textContent = '00:00:00.00';
             timerDisplay.textContent = '00:00:00';
             startPauseButton.textContent = 'Iniciar';
+            timerHoursInput.value = '';
             timerMinutesInput.value = '';
-            timerSecondsInput.value = '';
 
             // Habilita inputs
             enableInputs(true);
@@ -160,9 +160,9 @@
 
         function start() {
             // Pega o tempo do timer
+            const hours = parseInt(timerHoursInput.value) || 0;
             const minutes = parseInt(timerMinutesInput.value) || 0;
-            const seconds = parseInt(timerSecondsInput.value) || 0;
-            timerInitialSetTime = (minutes * 60 + seconds) * 1000;
+            timerInitialSetTime = ((hours * 3600) + (minutes * 60)) * 1000;
 
             // Se não houver tempo no timer, ele não inicia (mas o cronômetro sim)
             if (timerInitialSetTime > 0) {
@@ -283,10 +283,10 @@
 
         // Habilita/desabilita os inputs de tempo
         function enableInputs(enabled) {
+            timerHoursInput.disabled = !enabled;
             timerMinutesInput.disabled = !enabled;
-            timerSecondsInput.disabled = !enabled;
+            timerHoursInput.classList.toggle('bg-gray-100', !enabled);
             timerMinutesInput.classList.toggle('bg-gray-100', !enabled);
-            timerSecondsInput.classList.toggle('bg-gray-100', !enabled);
         }
 
     </script>
