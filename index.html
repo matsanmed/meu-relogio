@@ -32,7 +32,7 @@
         <div class="space-y-2">
             <h2 class="text-xl font-semibold text-gray-700">Cronômetro (Contagem Progressiva)</h2>
             <div id="stopwatchDisplay" class="text-6xl font-mono text-center bg-gray-900 text-green-400 p-4 rounded-lg shadow-inner">
-                00:00:00.00
+                00:00:00
             </div>
         </div>
 
@@ -132,7 +132,7 @@
             timerRemainingTime = 0;
 
             // Atualiza a UI
-            stopwatchDisplay.textContent = '00:00:00.00';
+            stopwatchDisplay.textContent = '00:00:00';
             timerDisplay.textContent = '00:00:00';
             startPauseButton.textContent = 'Iniciar';
             timerHoursInput.value = '';
@@ -154,7 +154,7 @@
                 stopwatchStartTime = Date.now(); // Reinicia o tempo de início para agora
             } else {
                 // Se estiver ocioso ou pausado, apenas zera o display
-                stopwatchDisplay.textContent = '00:00:00.00';
+                stopwatchDisplay.textContent = '00:00:00';
             }
         }
 
@@ -257,12 +257,14 @@
         // --- Funções Utilitárias ---
 
         function formatStopwatchTime(milliseconds) {
-            const hours = Math.floor(milliseconds / 3600000);
-            const minutes = Math.floor((milliseconds % 3600000) / 60000);
-            const seconds = Math.floor((milliseconds % 60000) / 1000);
-            const centiseconds = Math.floor((milliseconds % 1000) / 10); // Pega os centissegundos
+            // Arredonda para o segundo mais próximo
+            const totalSeconds = Math.floor(milliseconds / 1000);
 
-            return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(centiseconds)}`;
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
         }
 
         function formatTimerTime(milliseconds) {
