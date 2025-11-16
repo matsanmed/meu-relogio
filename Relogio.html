@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronômetro e Timer</title>
+    <!-- Carrega o Tailwind CSS para um visual moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Ajuste para inputs do tipo number não mostrarem as setinhas */
+        input[type='number']::-webkit-outer-spin-button,
+        input[type='number']::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type='number'] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md space-y-6">
+        
+        <h1 class="text-3xl font-bold text-center text-gray-800">Relógio Sincronizado</h1>
+
+        <!-- Seção do Cronômetro -->
+        <div class="space-y-2">
+            <h2 class="text-xl font-semibold text-gray-700">Cronômetro (Contagem Progressiva)</h2>
+            <div id="stopwatchDisplay" class="text-6xl font-mono text-center bg-gray-900 text-green-400 p-4 rounded-lg shadow-inner">
+                00:00:00.00
+            </div>
+        </div>
+
+        <!-- Seção do Timer -->
+        <div id="timerCard" class="space-y-4 p-4 border rounded-lg transition-colors duration-300">
+            <h2 class="text-xl font-semibold text-gray-700">Timer (Contagem Regressiva)</h2>
+            
+            <!-- Inputs para definir o tempo -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="timerMinutes" class="block text-sm font-medium text-gray-600">Minutos</label>
+                    <input type="number" id="timerMinutes" min="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-lg text-center text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="timerSeconds" class="block text-sm font-medium text-gray-600">Segundos</label>
+                    <input type="number" id="timerSeconds" min="0" max="59" placeholder="SS" class="w-full p-2 border border-gray-300 rounded-lg text-center text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+            
+            <!-- Display do Timer -->
+            <div id="timerDisplay" class="text-6xl font-mono text-center bg-gray-900 text-red-400 p-4 rounded-lg shadow-inner">
+                00:00:00
+            </div>
+        </div>
+
+        <!-- Botões de Controle -->
+        <div class="grid grid-cols-2 gap-4 pt-4">
+            <button id="startPauseButton" class="w-full bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg font-semibold text-lg transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-green-700 col-span-2">
+                Iniciar
+            </button>
+            <button id="resetStopwatchButton" class="w-full bg-gray-600 hover:bg-gray-700 text-white p-3 rounded-lg font-semibold text-lg transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-900">
+                Zerar Cronômetro
+            </button>
+            <button id="resetTimerButton" class="w-full bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-lg font-semibold text-lg transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-900">
+                Zerar Timer
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Referências aos Elementos do DOM ---
+        const stopwatchDisplay = document.getElementById('stopwatchDisplay');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerMinutesInput = document.getElementById('timerMinutes');
+        const timerSecondsInput = document.getElementById('timerSeconds');
+        const startPauseButton = document.getElementById('startPauseButton');
+        const resetStopwatchButton = document.getElementById('resetStopwatchButton');
+        const resetTimerButton = document.getElementById('resetTimerButton');
+        const timerCard = document.getElementById('timerCard');
+
+        // --- Variáveis de Estado ---
+        let state = 'idle'; // 'idle', 'running', 'paused'
+        let mainInterval = null; // ID do setInterval
+        
+        // Estado do Cronômetro
+        let stopwatchStartTime = 0;
+        let stopwatchElapsedTime = 0; // Tempo acumulado (para pausas)
+
+        // Estado do Timer
+        let timerEndTime = 0;
+        let timerInitialSetTime = 0; // Tempo original definido pelo usuário (ms)
+        let timerRemainingTime = 0; // Tempo restante (para pausas)
+        let timerFinished = false;
+
+        // --- Listeners de Eventos ---
+        startPauseButton.addEventListener('click', handleStartPause);
+        resetStopwatchButton.addEventListener('click', handleResetStopwatch);
+        resetTimerButton.addEventListener('click', handleResetTimer);
+
+        // --- Funções de Controle ---
+        function handleStartPause() {
+            if (state === 'idle') {
+                start();
+            } else if (state === 'running') {
+                pause();
+            } else if (state === 'paused') {
+                resume();
+            }
+        }
+
+        function handleResetTimer() {
+            // Para e limpa o intervalo
+            clearInterval(mainInterval);
+            mainInterval = null;
+            
+            // Reseta o estado
+            state = 'idle';
+            timerFinished = false;
+            
+            // Reseta os valores do cronômetro
+            stopwatchStartTime = 0;
+            stopwatchElapsedTime = 0;
+            
+            // Reseta os valores do timer
+            timerEndTime = 0;
+            timerInitialSetTime = 0;
+            timerRemainingTime = 0;
+
+            // Atualiza a UI
+            stopwatchDisplay.textContent = '00:00:00.00';
+            timerDisplay.textContent = '00:00:00';
+            startPauseButton.textContent = 'Iniciar';
+            timerMinutesInput.value = '';
+            timerSecondsInput.value = '';
+
+            // Habilita inputs
+            enableInputs(true);
+
+            // Reseta estilos
+            startPauseButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+            startPauseButton.classList.add('bg-green-500', 'hover:bg-green-600');
+            timerCard.classList.remove('bg-green-100', 'border-green-500', 'animate-pulse');
+        }
+
+        // Nova função para zerar APENAS o cronômetro
+        function handleResetStopwatch() {
+            stopwatchElapsedTime = 0;
+            if (state === 'running') {
+                stopwatchStartTime = Date.now(); // Reinicia o tempo de início para agora
+            } else {
+                // Se estiver ocioso ou pausado, apenas zera o display
+                stopwatchDisplay.textContent = '00:00:00.00';
+            }
+        }
+
+        function start() {
+            // Pega o tempo do timer
+            const minutes = parseInt(timerMinutesInput.value) || 0;
+            const seconds = parseInt(timerSecondsInput.value) || 0;
+            timerInitialSetTime = (minutes * 60 + seconds) * 1000;
+
+            // Se não houver tempo no timer, ele não inicia (mas o cronômetro sim)
+            if (timerInitialSetTime > 0) {
+                timerRemainingTime = timerInitialSetTime;
+                timerEndTime = Date.now() + timerRemainingTime;
+                timerFinished = false;
+            } else {
+                timerFinished = true; // Marca como "terminado" se for 0
+                timerDisplay.textContent = '00:00:00';
+            }
+
+            // Define o estado de "running"
+            state = 'running';
+            stopwatchStartTime = Date.now();
+            stopwatchElapsedTime = 0; // Começando do zero
+
+            // Inicia o loop principal
+            mainInterval = setInterval(updateClocks, 50); // Atualiza a cada 50ms
+
+            // Atualiza UI
+            startPauseButton.textContent = 'Pausar';
+            startPauseButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+            startPauseButton.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            enableInputs(false);
+            timerCard.classList.remove('bg-green-100', 'border-green-500', 'animate-pulse');
+        }
+
+        function pause() {
+            // Para o loop
+            clearInterval(mainInterval);
+            mainInterval = null;
+            
+            // Salva o progresso
+            stopwatchElapsedTime += Date.now() - stopwatchStartTime;
+            if (!timerFinished) {
+                timerRemainingTime = timerEndTime - Date.now();
+            }
+            
+            // Define o estado de "paused"
+            state = 'paused';
+
+            // Atualiza UI
+            startPauseButton.textContent = 'Retomar';
+            startPauseButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+            startPauseButton.classList.add('bg-green-500', 'hover:bg-green-600');
+            // Mantém inputs desabilitados para evitar confusão
+        }
+
+        function resume() {
+            // Define o estado de "running"
+            state = 'running';
+            
+            // Define novos pontos de início/fim baseados no tempo pausado
+            stopwatchStartTime = Date.now(); // Reinicia o "início" para este trecho
+            if (!timerFinished) {
+                timerEndTime = Date.now() + timerRemainingTime; // Calcula novo fim
+            }
+
+            // Reinicia o loop
+            mainInterval = setInterval(updateClocks, 50);
+
+            // Atualiza UI
+            startPauseButton.textContent = 'Pausar';
+            startPauseButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+            startPauseButton.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+        }
+
+        // --- Loop Principal de Atualização ---
+        function updateClocks() {
+            const now = Date.now();
+
+            // 1. Atualizar Cronômetro
+            const totalStopwatchTime = stopwatchElapsedTime + (now - stopwatchStartTime);
+            stopwatchDisplay.textContent = formatStopwatchTime(totalStopwatchTime);
+
+            // 2. Atualizar Timer (apenas se não tiver terminado)
+            if (!timerFinished) {
+                const remaining = timerEndTime - now;
+                
+                if (remaining <= 0) {
+                    // Timer acabou!
+                    timerFinished = true;
+                    timerDisplay.textContent = '00:00:00';
+                    timerCard.classList.add('bg-green-100', 'border-green-500', 'animate-pulse');
+                    // O cronômetro continua rodando
+                } else {
+                    timerDisplay.textContent = formatTimerTime(remaining);
+                }
+            }
+        }
+
+        // --- Funções Utilitárias ---
+
+        function formatStopwatchTime(milliseconds) {
+            const hours = Math.floor(milliseconds / 3600000);
+            const minutes = Math.floor((milliseconds % 3600000) / 60000);
+            const seconds = Math.floor((milliseconds % 60000) / 1000);
+            const centiseconds = Math.floor((milliseconds % 1000) / 10); // Pega os centissegundos
+
+            return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(centiseconds)}`;
+        }
+
+        function formatTimerTime(milliseconds) {
+            // Arredonda para cima para o segundo mais próximo
+            const totalSeconds = Math.ceil(milliseconds / 1000);
+
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        }
+
+        // Adiciona um zero à esquerda se o número for menor que 10
+        function pad(number) {
+            return number.toString().padStart(2, '0');
+        }
+
+        // Habilita/desabilita os inputs de tempo
+        function enableInputs(enabled) {
+            timerMinutesInput.disabled = !enabled;
+            timerSecondsInput.disabled = !enabled;
+            timerMinutesInput.classList.toggle('bg-gray-100', !enabled);
+            timerSecondsInput.classList.toggle('bg-gray-100', !enabled);
+        }
+
+    </script>
+</body>
+</html>
