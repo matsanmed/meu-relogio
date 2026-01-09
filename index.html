@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronômetro e Timer 2.2</title>
+    <title>Cronômetro e Timer 2.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,12 +28,14 @@
         
         <!-- Cabeçalho -->
         <div class="flex justify-between items-center mb-4">
-            <button id="toggleDarkModeBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors" title="Modo Noturno">
-                <svg id="iconMoon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                <svg id="iconSun" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <button id="toggleDarkModeBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors" title="Alternar Modo Noturno">
+                <!-- Ícone Lua (agora oculto por padrão pois começa no dark) -->
+                <svg id="iconMoon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <!-- Ícone Sol (visível por padrão) -->
+                <svg id="iconSun" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
             </button>
             
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white text-center">Relógio V2.2</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white text-center">Relógio V2.3</h1>
 
             <button id="togglePomodoroBtn" class="text-sm px-3 py-1 rounded-full border border-blue-500 text-blue-500 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors font-semibold">
                 Modo Pomodoro
@@ -52,7 +54,7 @@
         <!-- Timer / Pomodoro Card -->
         <div id="timerCard" class="space-y-4 p-5 border-2 border-gray-200 dark:border-gray-700 rounded-xl transition-all duration-300 bg-gray-50 dark:bg-gray-800/50">
             
-            <!-- Título e Configurações (Centralizado com Absolute Right) -->
+            <!-- Título e Configurações -->
             <div class="relative flex justify-center items-center mb-2">
                 <h2 id="timerTitle" class="text-xl font-bold text-gray-700 dark:text-gray-200 text-center">Timer</h2>
                 
@@ -92,14 +94,11 @@
                 <div id="progressBar" class="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-1000" style="width: 100%"></div>
             </div>
             
-            <!-- Controles Específicos do Pomodoro (Overtime/Descanso) -->
+            <!-- Controles Específicos do Pomodoro -->
             <div id="pomoExtraControls" class="hidden grid grid-cols-2 gap-3 pt-1">
-                 <!-- Botão que aparece quando o foco acaba -->
                  <button id="startRestBtn" class="col-span-2 hidden bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-lg font-bold shadow-lg animate-bounce">
                     ☕ Iniciar Descanso
                  </button>
-                 
-                 <!-- Botões do modo Descanso -->
                  <button id="add5MinBtn" class="hidden bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 p-2 rounded-lg text-sm font-semibold">
                     +5 Min
                  </button>
@@ -114,13 +113,9 @@
             <button id="startPauseButton" class="col-span-2 bg-green-600 hover:bg-green-700 text-white p-4 rounded-xl font-bold text-xl transition-all shadow-lg transform active:scale-95">
                 INICIAR
             </button>
-            
-            <!-- Botão Zerar Cronômetro -->
             <button id="resetStopwatchButton" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-3 rounded-lg font-semibold text-sm transition-all duration-300">
                 Zerar Cronômetro
             </button>
-            
-            <!-- Botão Resetar Timer (some no Pomodoro) -->
             <button id="resetTimerButton" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-3 rounded-lg font-semibold text-sm transition-colors">
                 Resetar Timer
             </button>
@@ -173,14 +168,10 @@
         const pomoSideTimer = document.getElementById('pomoSideTimer');
         const pomoSideLabel = document.getElementById('pomoSideLabel');
         const pomoPhaseText = document.getElementById('pomoPhaseText');
-        
-        // V2.1 Controls
         const pomoExtraControls = document.getElementById('pomoExtraControls');
         const startRestBtn = document.getElementById('startRestBtn');
         const add5MinBtn = document.getElementById('add5MinBtn');
         const skipRestBtn = document.getElementById('skipRestBtn');
-
-        // Modal
         const pomoModal = document.getElementById('pomoModal');
         const pomoWorkInput = document.getElementById('pomoWorkInput');
         const pomoRestInput = document.getElementById('pomoRestInput');
@@ -190,50 +181,39 @@
         // --- Estado ---
         let state = 'idle'; 
         let mainInterval = null;
-        
-        // Cronômetro
         let stopwatchStartTime = 0;
         let stopwatchElapsedTime = 0;
-
-        // Timer
         let timerEndTime = 0;
         let timerInitialSetTime = 0;
         let timerRemainingTime = 0;
         let timerFinished = false;
-
-        // Pomodoro State
         let isPomodoroMode = false;
         let pomoWorkMinutes = 30;
         let pomoRestMinutes = 5;
-        let pomoPhase = 'work'; // 'work' ou 'rest'
-        let pomoOvertime = false; // Se o tempo de foco acabou mas ainda não iniciou descanso
+        let pomoPhase = 'work';
+        let pomoOvertime = false;
 
         // --- Event Listeners ---
         startPauseButton.addEventListener('click', handleStartPause);
         resetStopwatchButton.addEventListener('click', handleResetStopwatch);
-        resetTimerButton.addEventListener('click', () => resetTimerState(true)); // Reset Manual completo
+        resetTimerButton.addEventListener('click', () => resetTimerState(true));
         
-        // Dark Mode
         toggleDarkModeBtn.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
             iconMoon.classList.toggle('hidden');
             iconSun.classList.toggle('hidden');
         });
 
-        // Pomodoro Toggle
         togglePomodoroBtn.addEventListener('click', () => {
             isPomodoroMode = !isPomodoroMode;
-            // Ao trocar de modo, resetamos apenas o TIMER, mantendo o Cronômetro
             resetTimerState(false); 
             updateUIMode();
         });
 
-        // Pomodoro Extra Actions
         startRestBtn.addEventListener('click', initRestPhase);
         skipRestBtn.addEventListener('click', skipRest);
         add5MinBtn.addEventListener('click', addFiveMinutes);
 
-        // Modal
         pomoSettingsBtn.addEventListener('click', () => pomoModal.classList.remove('hidden'));
         closeModalBtn.addEventListener('click', () => pomoModal.classList.add('hidden'));
         savePomoSettingsBtn.addEventListener('click', () => {
@@ -247,41 +227,29 @@
 
         function updateUIMode() {
             if (isPomodoroMode) {
-                // UI Pomodoro
                 togglePomodoroBtn.textContent = 'Voltar ao Manual';
                 togglePomodoroBtn.classList.replace('text-blue-500', 'text-purple-500');
                 togglePomodoroBtn.classList.replace('border-blue-500', 'border-purple-500');
-                
                 timerTitle.textContent = 'Modo Pomodoro';
                 manualInputSection.classList.add('hidden');
                 pomoStatusSection.classList.remove('hidden');
                 pomoSettingsBtn.classList.remove('hidden');
                 resetTimerButton.classList.add('hidden'); 
-                
-                // Centraliza o botão "Zerar Cronômetro" ocupando 2 colunas
                 resetStopwatchButton.classList.add('col-span-2', 'w-full');
-
                 pomoExtraControls.classList.remove('hidden'); 
-                
                 updatePomoDisplayInfo();
                 if(state === 'idle') timerDisplay.textContent = formatPomoTime(pomoWorkMinutes * 60 * 1000);
             } else {
-                // UI Manual
                 togglePomodoroBtn.textContent = 'Modo Pomodoro';
                 togglePomodoroBtn.classList.replace('text-purple-500', 'text-blue-500');
                 togglePomodoroBtn.classList.replace('border-purple-500', 'border-blue-500');
-
                 timerTitle.textContent = 'Timer';
                 manualInputSection.classList.remove('hidden');
                 pomoStatusSection.classList.add('hidden');
                 pomoSettingsBtn.classList.add('hidden');
                 resetTimerButton.classList.remove('hidden');
-                
-                // Volta o botão "Zerar Cronômetro" ao normal (1 coluna)
                 resetStopwatchButton.classList.remove('col-span-2', 'w-full');
-                
                 pomoExtraControls.classList.add('hidden');
-
                 timerDisplay.textContent = '00:00:00';
             }
             updatePomoButtonsVisibility();
@@ -289,8 +257,6 @@
 
         function updatePomoButtonsVisibility() {
             if (!isPomodoroMode) return;
-
-            // Esconde tudo primeiro
             startRestBtn.classList.add('hidden');
             add5MinBtn.classList.add('hidden');
             skipRestBtn.classList.add('hidden');
@@ -320,34 +286,50 @@
             }
 
             if (timerInitialSetTime > 0) {
+                // Início Normal (com timer)
                 timerRemainingTime = timerInitialSetTime;
                 timerEndTime = Date.now() + timerRemainingTime;
                 timerFinished = false;
                 pomoOvertime = false;
                 
                 state = 'running';
-                // Define o start time do cronometro apenas se ele estava zerado
                 if (stopwatchElapsedTime === 0 && stopwatchStartTime === 0) {
                      stopwatchStartTime = Date.now();
                 } else {
-                     // Se já tinha tempo, ajusta o startTime para descontar o tempo pausado
                      stopwatchStartTime = Date.now() - stopwatchElapsedTime;
                 }
                 
                 startLoop();
                 updateUIState(true);
             } else {
-                alert("Defina um tempo para o Timer.");
+                // Modificação V2.3: Confirmação se quer iniciar sem timer
+                if (!isPomodoroMode) {
+                    if (confirm("Você não definiu um tempo para o Timer.\nDeseja iniciar apenas o Cronômetro?")) {
+                        // Inicia apenas o cronômetro
+                        timerFinished = true; // Timer marcado como inativo
+                        pomoOvertime = false;
+                        
+                        state = 'running';
+                        
+                        if (stopwatchElapsedTime === 0 && stopwatchStartTime === 0) {
+                             stopwatchStartTime = Date.now();
+                        } else {
+                             stopwatchStartTime = Date.now() - stopwatchElapsedTime;
+                        }
+                        
+                        startLoop();
+                        updateUIState(true);
+                    }
+                } else {
+                    alert("Defina um tempo para o Timer.");
+                }
             }
         }
 
         function pause() {
             clearInterval(mainInterval);
             state = 'paused';
-            
-            // Pausa o cronômetro
             stopwatchElapsedTime = Date.now() - stopwatchStartTime;
-            
             if (!timerFinished) {
                 timerRemainingTime = timerEndTime - Date.now();
             }
@@ -356,7 +338,6 @@
 
         function resume() {
             state = 'running';
-            // Recalcula start times
             stopwatchStartTime = Date.now() - stopwatchElapsedTime;
             if (!timerFinished) {
                 timerEndTime = Date.now() + timerRemainingTime;
@@ -370,46 +351,40 @@
             mainInterval = setInterval(() => {
                 const now = Date.now();
 
-                // 1. Atualizar Cronômetro (Sempre atualiza se não estiver em pausa de descanso Pomodoro)
+                // 1. Atualizar Cronômetro
                 const shouldUpdateStopwatch = !isPomodoroMode || (isPomodoroMode && pomoPhase === 'work');
                 
                 if (shouldUpdateStopwatch) {
                     const totalStopwatchTime = now - stopwatchStartTime;
-                    stopwatchElapsedTime = totalStopwatchTime; // Atualiza o elapsed em tempo real
+                    stopwatchElapsedTime = totalStopwatchTime;
                     stopwatchDisplay.textContent = formatStopwatchTime(totalStopwatchTime);
                     stopwatchStatus.textContent = "";
                     stopwatchDisplay.classList.remove('opacity-50');
                 } else {
                     stopwatchStatus.textContent = "(Pausado durante o descanso)";
                     stopwatchDisplay.classList.add('opacity-50');
-                    // Mantemos o startTime ajustado para que o elapsed não aumente
                     stopwatchStartTime = now - stopwatchElapsedTime;
                 }
 
-                // 2. Atualizar Timer
+                // 2. Atualizar Timer (apenas se não estiver marcado como finalizado/inativo)
                 if (!timerFinished) {
                     const remaining = timerEndTime - now;
                     const progress = Math.max(0, (remaining / timerInitialSetTime) * 100);
                     progressBar.style.width = `${progress}%`;
 
                     if (remaining <= 0) {
-                        // Timer Acabou
                         if (isPomodoroMode && pomoPhase === 'work') {
                             timerFinished = true;
                             timerDisplay.textContent = "00:00:00";
                             enterPomoOvertime();
                         } else {
-                            // Fim do descanso ou manual
                             timerFinished = true;
                             timerDisplay.textContent = "00:00:00";
                             if (isPomodoroMode && pomoPhase === 'rest') {
-                                // Se acabou descanso, para tudo
                                 clearInterval(mainInterval);
                                 handleTimerFinishGeneric();
                             } else {
-                                // Manual acabou: cronometro CONTINUA, só timer para
                                 timerDisplay.classList.add('text-red-600', 'animate-pulse');
-                                // Não damos clearInterval aqui para o cronometro seguir
                             }
                         }
                     } else {
@@ -420,7 +395,6 @@
         }
 
         function enterPomoOvertime() {
-            // Continua rodando para o cronômetro contar
             pomoOvertime = true;
             timerDisplay.classList.remove('text-red-400');
             timerDisplay.classList.add('text-red-600', 'animate-pulse', 'font-bold');
@@ -430,18 +404,13 @@
         function initRestPhase() {
             pomoPhase = 'rest';
             pomoOvertime = false;
-            
-            // Pausa o cronômetro total ao entrar no descanso
             stopwatchElapsedTime = Date.now() - stopwatchStartTime;
-            
             timerDisplay.classList.remove('text-red-600', 'animate-pulse', 'font-bold');
             timerDisplay.classList.add('text-green-500');
-
             timerInitialSetTime = pomoRestMinutes * 60 * 1000;
             timerRemainingTime = timerInitialSetTime;
             timerEndTime = Date.now() + timerRemainingTime;
             timerFinished = false;
-
             updatePomoDisplayInfo();
             updatePomoButtonsVisibility();
             startLoop();
@@ -449,13 +418,8 @@
 
         function skipRest() {
             pomoPhase = 'work';
-            // IMPORTANTE: Reseta apenas o estado do Timer, mantém Cronômetro
             resetTimerState(false); 
-            // Prepara para iniciar
             updatePomoDisplayInfo();
-            // Opcional: Auto-start? Como é "pular", vamos deixar o usuário iniciar o foco
-            // Se preferir auto-start, descomente abaixo:
-            // start(); 
         }
 
         function addFiveMinutes() {
@@ -478,28 +442,16 @@
             }
         }
 
-        // Função separada para resetar APENAS o Timer
         function resetTimerState(fullStop) {
             clearInterval(mainInterval);
             state = 'idle';
             timerFinished = false;
             pomoOvertime = false;
-            
-            // Reseta variáveis do Timer
             timerEndTime = 0;
             timerInitialSetTime = 0;
             timerRemainingTime = 0;
-            
-            // Se fullStop for true (reset manual botão), pausa cronômetro visualmente também
-            // mas NÃO zera o stopwatchElapsedTime
-            if (fullStop) {
-                // Apenas garante que a UI mostre o botão iniciar
-            }
-
-            // Reset UI Style
             timerDisplay.classList.remove('text-red-600', 'animate-pulse', 'font-bold', 'text-green-500', 'text-red-400');
             timerDisplay.classList.add('text-red-400');
-
             if (isPomodoroMode) {
                 pomoPhase = 'work';
                 updatePomoDisplayInfo();
@@ -509,7 +461,6 @@
                 timerHoursInput.value = '';
                 timerMinutesInput.value = '';
             }
-
             startPauseButton.textContent = 'INICIAR';
             startPauseButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
             startPauseButton.classList.add('bg-green-600', 'hover:bg-green-700');
@@ -521,13 +472,11 @@
 
         function handleResetStopwatch() {
             stopwatchElapsedTime = 0;
-            stopwatchStartTime = Date.now(); // Zera e já deixa pronto se estiver rodando
+            stopwatchStartTime = Date.now();
             if (state !== 'running') {
                 stopwatchDisplay.textContent = '00:00:00';
             }
         }
-
-        // --- Helpers ---
 
         function updatePomoDisplayInfo() {
             if (pomoPhase === 'work') {
@@ -593,7 +542,6 @@
         }
 
         function pad(num) { return num.toString().padStart(2, '0'); }
-
     </script>
 </body>
 </html>
