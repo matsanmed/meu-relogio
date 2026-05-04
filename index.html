@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-PT" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronômetro e Timer 2.3</title>
+    <title>Cronómetro e Timer 2.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,20 +29,20 @@
         <!-- Cabeçalho -->
         <div class="flex justify-between items-center mb-4">
             <button id="toggleDarkModeBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors" title="Alternar Modo Noturno">
-                <!-- Ícone Lua (agora oculto por padrão pois começa no dark) -->
+                <!-- Ícone Lua (oculto por defeito pois começa no dark) -->
                 <svg id="iconMoon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                <!-- Ícone Sol (visível por padrão) -->
+                <!-- Ícone Sol (visível por defeito) -->
                 <svg id="iconSun" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
             </button>
             
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white text-center">Relógio V2.3</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white text-center">Relógio V2.5</h1>
 
             <button id="togglePomodoroBtn" class="text-sm px-3 py-1 rounded-full border border-blue-500 text-blue-500 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors font-semibold">
                 Modo Pomodoro
             </button>
         </div>
 
-        <!-- Cronômetro Total -->
+        <!-- Cronómetro Total -->
         <div class="space-y-2 text-center">
             <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide text-center">Cronômetro Total</h2>
             <div id="stopwatchDisplay" class="text-5xl font-mono text-center bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-green-400 p-4 rounded-xl border-2 border-transparent shadow-inner transition-colors duration-300">
@@ -94,7 +94,7 @@
                 <div id="progressBar" class="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-1000" style="width: 100%"></div>
             </div>
             
-            <!-- Controles Específicos do Pomodoro -->
+            <!-- Controlos Específicos do Pomodoro -->
             <div id="pomoExtraControls" class="hidden grid grid-cols-2 gap-3 pt-1">
                  <button id="startRestBtn" class="col-span-2 hidden bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-lg font-bold shadow-lg animate-bounce">
                     ☕ Iniciar Descanso
@@ -108,7 +108,7 @@
             </div>
         </div>
 
-        <!-- Botões de Controle Gerais -->
+        <!-- Botões de Controlo Gerais -->
         <div class="grid grid-cols-2 gap-4 pt-2">
             <button id="startPauseButton" class="col-span-2 bg-green-600 hover:bg-green-700 text-white p-4 rounded-xl font-bold text-xl transition-all shadow-lg transform active:scale-95">
                 INICIAR
@@ -286,7 +286,7 @@
             }
 
             if (timerInitialSetTime > 0) {
-                // Início Normal (com timer)
+                // Início Normal
                 timerRemainingTime = timerInitialSetTime;
                 timerEndTime = Date.now() + timerRemainingTime;
                 timerFinished = false;
@@ -302,13 +302,10 @@
                 startLoop();
                 updateUIState(true);
             } else {
-                // Modificação V2.3: Confirmação se quer iniciar sem timer
                 if (!isPomodoroMode) {
-                    if (confirm("Você não definiu um tempo para o Timer.\nDeseja iniciar apenas o Cronômetro?")) {
-                        // Inicia apenas o cronômetro
-                        timerFinished = true; // Timer marcado como inativo
+                    if (confirm("Não definiu um tempo para o Timer.\nDeseja iniciar apenas o Cronómetro?")) {
+                        timerFinished = true; 
                         pomoOvertime = false;
-                        
                         state = 'running';
                         
                         if (stopwatchElapsedTime === 0 && stopwatchStartTime === 0) {
@@ -351,7 +348,7 @@
             mainInterval = setInterval(() => {
                 const now = Date.now();
 
-                // 1. Atualizar Cronômetro
+                // 1. Atualizar Cronómetro
                 const shouldUpdateStopwatch = !isPomodoroMode || (isPomodoroMode && pomoPhase === 'work');
                 
                 if (shouldUpdateStopwatch) {
@@ -366,7 +363,7 @@
                     stopwatchStartTime = now - stopwatchElapsedTime;
                 }
 
-                // 2. Atualizar Timer (apenas se não estiver marcado como finalizado/inativo)
+                // 2. Atualizar Timer
                 if (!timerFinished) {
                     const remaining = timerEndTime - now;
                     const progress = Math.max(0, (remaining / timerInitialSetTime) * 100);
@@ -468,6 +465,9 @@
             progressBar.style.width = '100%';
             enableInputs(true);
             updatePomoButtonsVisibility();
+            
+            // Força a atualização imediata do título da aba quando resetamos
+            document.title = "Cronómetro e Timer 2.5";
         }
 
         function handleResetStopwatch() {
@@ -542,6 +542,42 @@
         }
 
         function pad(num) { return num.toString().padStart(2, '0'); }
+
+        // --- Lógica de Atualização da Aba do Navegador (V2.5) ---
+        setInterval(() => {
+            // Utilizamos .trim() para remover os espaços em branco indesejados
+            let currentStopwatchStr = stopwatchDisplay.textContent.trim();
+            let newTitle = "Cronómetro e Timer 2.5";
+
+            if (state === 'idle' && currentStopwatchStr === '00:00:00') {
+                newTitle = "Cronómetro e Timer 2.5";
+            } else if (isPomodoroMode) {
+                if (pomoOvertime) {
+                    const blink = Math.floor(Date.now() / 500) % 2 === 0;
+                    newTitle = blink ? `⚠️ FIM DO FOCO!` : `⏱️ ${currentStopwatchStr}`;
+                } else if (pomoPhase === 'rest') {
+                    if (timerFinished) {
+                        const blink = Math.floor(Date.now() / 500) % 2 === 0;
+                        newTitle = blink ? `🔴 HORA DE FOCAR!` : `⏱️ ${currentStopwatchStr}`;
+                    } else {
+                        newTitle = `☕ ${currentStopwatchStr} | Descanso`;
+                    }
+                } else {
+                    if (state === 'running') newTitle = `🧠 ${currentStopwatchStr} | Foco`;
+                    else if (state === 'paused') newTitle = `⏸️ ${currentStopwatchStr} | Pausado`;
+                    else newTitle = `⏱️ ${currentStopwatchStr} | Pronto`;
+                }
+            } else {
+                // Modo Manual: Removido o alerta a piscar (apenas mostra o cronómetro)
+                if (state === 'running') newTitle = `⏱️ ${currentStopwatchStr} | Rodando`;
+                else if (state === 'paused') newTitle = `⏸️ ${currentStopwatchStr} | Pausado`;
+                else newTitle = `⏱️ ${currentStopwatchStr} | Pronto`;
+            }
+
+            if (document.title !== newTitle) {
+                document.title = newTitle;
+            }
+        }, 500);
     </script>
 </body>
 </html>
