@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronómetro e Timer 2.5</title>
+    <title>Cronómetro e Timer 2.8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,13 +29,11 @@
         <!-- Cabeçalho -->
         <div class="flex justify-between items-center mb-4">
             <button id="toggleDarkModeBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors" title="Alternar Modo Noturno">
-                <!-- Ícone Lua (oculto por defeito pois começa no dark) -->
                 <svg id="iconMoon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                <!-- Ícone Sol (visível por defeito) -->
                 <svg id="iconSun" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
             </button>
             
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white text-center">Relógio V2.5</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white text-center">Relógio V2.8</h1>
 
             <button id="togglePomodoroBtn" class="text-sm px-3 py-1 rounded-full border border-blue-500 text-blue-500 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors font-semibold">
                 Modo Pomodoro
@@ -44,7 +42,15 @@
 
         <!-- Cronómetro Total -->
         <div class="space-y-2 text-center">
-            <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide text-center">Cronômetro Total</h2>
+            <!-- Título com Botão de Edição V2.8 -->
+            <div class="relative flex justify-center items-center mb-1">
+                <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide text-center">Cronômetro Total</h2>
+                <button id="editStopwatchBtn" class="absolute right-0 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors p-1" title="Ajustar Tempo Inicial">
+                    <!-- Ícone de Lápis -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </button>
+            </div>
+            
             <div id="stopwatchDisplay" class="text-5xl font-mono text-center bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-green-400 p-4 rounded-xl border-2 border-transparent shadow-inner transition-colors duration-300">
                 00:00:00
             </div>
@@ -122,7 +128,7 @@
         </div>
     </div>
 
-    <!-- Modal de Configuração -->
+    <!-- Modal de Configuração Pomodoro -->
     <div id="pomoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl w-80 transform transition-all scale-100">
             <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Configurar Pomodoro</h3>
@@ -139,6 +145,30 @@
             <div class="mt-6 flex justify-end space-x-3">
                 <button id="closeModalBtn" class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400">Cancelar</button>
                 <button id="savePomoSettingsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Ajuste do Cronómetro (V2.8) -->
+    <div id="stopwatchModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl w-80 transform transition-all scale-100">
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-1">Ajustar Tempo</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Insira o tempo de estudo anterior.</p>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1 text-center">Horas</label>
+                    <input type="number" id="swEditHours" min="0" placeholder="00" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-center font-mono">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1 text-center">Minutos</label>
+                    <input type="number" id="swEditMinutes" min="0" max="59" placeholder="00" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-center font-mono">
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end space-x-3">
+                <button id="closeSwEditBtn" class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400">Cancelar</button>
+                <button id="saveSwEditBtn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow">Aplicar</button>
             </div>
         </div>
     </div>
@@ -177,6 +207,14 @@
         const pomoRestInput = document.getElementById('pomoRestInput');
         const savePomoSettingsBtn = document.getElementById('savePomoSettingsBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
+
+        // V2.8 Elements
+        const editStopwatchBtn = document.getElementById('editStopwatchBtn');
+        const stopwatchModal = document.getElementById('stopwatchModal');
+        const swEditHours = document.getElementById('swEditHours');
+        const swEditMinutes = document.getElementById('swEditMinutes');
+        const saveSwEditBtn = document.getElementById('saveSwEditBtn');
+        const closeSwEditBtn = document.getElementById('closeSwEditBtn');
 
         // --- Estado ---
         let state = 'idle'; 
@@ -222,6 +260,43 @@
             pomoModal.classList.add('hidden');
             resetTimerState(false);
         });
+
+        // --- V2.8 Event Listeners (Editar Cronômetro) ---
+        editStopwatchBtn.addEventListener('click', () => {
+            // Pegar o tempo atual do display
+            const timeStr = stopwatchDisplay.textContent.trim();
+            const parts = timeStr.split(':');
+            if(parts.length === 3) {
+                swEditHours.value = parseInt(parts[0], 10);
+                swEditMinutes.value = parseInt(parts[1], 10);
+            }
+            stopwatchModal.classList.remove('hidden');
+        });
+
+        closeSwEditBtn.addEventListener('click', () => {
+            stopwatchModal.classList.add('hidden');
+        });
+
+        saveSwEditBtn.addEventListener('click', () => {
+            const h = parseInt(swEditHours.value) || 0;
+            const m = parseInt(swEditMinutes.value) || 0;
+
+            const totalMs = (h * 3600 + m * 60) * 1000;
+
+            stopwatchElapsedTime = totalMs;
+            
+            // Se estiver a rodar, ajustamos o StartTime para que o próximo ciclo some o novo valor corretamente
+            if (state === 'running') {
+                stopwatchStartTime = Date.now();
+            }
+
+            // Atualiza o ecrã instantaneamente
+            stopwatchDisplay.textContent = formatStopwatchTime(totalMs);
+            document.title = "Cronómetro e Timer 2.8";
+            
+            stopwatchModal.classList.add('hidden');
+        });
+
 
         // --- Lógica Principal ---
 
@@ -286,7 +361,6 @@
             }
 
             if (timerInitialSetTime > 0) {
-                // Início Normal
                 timerRemainingTime = timerInitialSetTime;
                 timerEndTime = Date.now() + timerRemainingTime;
                 timerFinished = false;
@@ -466,8 +540,7 @@
             enableInputs(true);
             updatePomoButtonsVisibility();
             
-            // Força a atualização imediata do título da aba quando resetamos
-            document.title = "Cronómetro e Timer 2.5";
+            document.title = "Cronómetro e Timer 2.8";
         }
 
         function handleResetStopwatch() {
@@ -543,14 +616,13 @@
 
         function pad(num) { return num.toString().padStart(2, '0'); }
 
-        // --- Lógica de Atualização da Aba do Navegador (V2.5) ---
+        // --- Lógica de Atualização da Aba do Navegador ---
         setInterval(() => {
-            // Utilizamos .trim() para remover os espaços em branco indesejados
             let currentStopwatchStr = stopwatchDisplay.textContent.trim();
-            let newTitle = "Cronómetro e Timer 2.5";
+            let newTitle = "Cronómetro e Timer 2.8";
 
             if (state === 'idle' && currentStopwatchStr === '00:00:00') {
-                newTitle = "Cronómetro e Timer 2.5";
+                newTitle = "Cronómetro e Timer 2.8";
             } else if (isPomodoroMode) {
                 if (pomoOvertime) {
                     const blink = Math.floor(Date.now() / 500) % 2 === 0;
@@ -568,7 +640,6 @@
                     else newTitle = `⏱️ ${currentStopwatchStr} | Pronto`;
                 }
             } else {
-                // Modo Manual: Removido o alerta a piscar (apenas mostra o cronómetro)
                 if (state === 'running') newTitle = `⏱️ ${currentStopwatchStr} | Rodando`;
                 else if (state === 'paused') newTitle = `⏸️ ${currentStopwatchStr} | Pausado`;
                 else newTitle = `⏱️ ${currentStopwatchStr} | Pronto`;
